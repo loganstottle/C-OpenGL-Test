@@ -24,6 +24,8 @@ window_t window_init(int width, int height, bool vsync, const char* title) {
   glfwMakeContextCurrent(window);
   glfwSwapInterval(vsync);
 
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
   if(gladLoadGL() == 0) {
     printf("fatal: GLAD failed to load");
     glfwTerminate();
