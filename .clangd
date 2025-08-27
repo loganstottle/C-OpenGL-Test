@@ -1,6 +1,0 @@
-HeaderInsertion:
-  InsertIncludes: false
-  Decorators: false
-
-InlayHints:
-  Enabled: No
