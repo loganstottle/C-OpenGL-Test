@@ -10,11 +10,8 @@ uniform mat4 u_view;
 uniform mat4 u_projection;
 
 out vec2 tex_coord;
-out vec3 normal;
 
 void main() {
   gl_Position = u_projection * u_view * u_model * vec4(a_pos, 1.0);
-
-  normal = transpose(inverse(mat3(u_view * u_model))) * a_normal;
   tex_coord = a_tex;
 }

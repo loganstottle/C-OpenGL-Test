@@ -1,7 +1,5 @@
 #version 460 core
 
-in vec3 pos;
-in vec3 normal;
 in vec2 tex_coord;
 
 out vec4 FragColor;
