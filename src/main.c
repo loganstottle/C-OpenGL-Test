@@ -58,10 +58,12 @@ int main() {
   mat3 normal;
 
   transform_to_model_matrix(square_transform, model);
-  shader_set_uniform_matrix_4fv(shader, "u_model", model);
 
   camera_to_matrix(camera, view);
   shader_set_uniform_matrix_4fv(shader, "u_view", view);
+
+  glm_mat4_mul(view, model, model_view);
+  shader_set_uniform_matrix_4fv(shader, "u_modelview", model_view);
 
   glm_perspective(glm_rad(fov), window_width / window_height, near_plane, far_plane, projection);
   shader_set_uniform_matrix_4fv(shader, "u_projection", projection);
@@ -74,9 +76,7 @@ int main() {
 
   while (window_alive(window)) {
     window_update(&window); // poll events & update dt
-
     if (window_iskeydown(window, GLFW_KEY_ESCAPE)) break;
-
     camera_inputs(&camera, window);
 
     if (camera.dirty) {
@@ -84,11 +84,13 @@ int main() {
       shader_set_uniform_matrix_4fv(shader, "u_view", view);
     }
 
-    square_transform.rotation[1] += 0.25;
-    square_transform.rotation[2] += 0.25;
+    square_transform.rotation[1] += 0.1;
+    square_transform.rotation[2] += 0.1;
 
     transform_to_model_matrix(square_transform, model);
-    shader_set_uniform_matrix_4fv(shader, "u_model", model);
+
+    glm_mat4_mul(view, model, model_view);
+    shader_set_uniform_matrix_4fv(shader, "u_modelview", model_view);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDrawElements(GL_TRIANGLES, sizeof(cube_indices) / sizeof(unsigned int), GL_UNSIGNED_INT, NULL);

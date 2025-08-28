@@ -38,7 +38,7 @@ GLuint shader_compile(const char* path, GLenum type) {
   glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
   if (!success) {
     glGetShaderInfoLog(shader, MAX_SHADER_ERROR_LENGTH, NULL, info);
-    printf("Shader compilation failed (%s): %s\n", path, info);
+    printf("Shader compilation failed (%s): \n%s\n", path, info);
     exit(EXIT_FAILURE);
   }
 
@@ -98,4 +98,11 @@ void shader_set_uniform_matrix_3fv(shader_t shader, const char* name, mat3 matri
 
   if (check_uniform_location(uniform_location, name))
     glUniformMatrix3fv(uniform_location, 1, GL_FALSE, (GLfloat*)matrix);
+}
+
+void shader_set_uniform_3fv(shader_t shader, const char* name, vec3 vector) {
+  int uniform_location = glGetUniformLocation(shader.id, name);
+
+  if (check_uniform_location(uniform_location, name))
+    glUniform3fv(uniform_location, 1, (GLfloat*)vector);
 }
