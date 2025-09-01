@@ -34,7 +34,7 @@ window_t window_init(int width, int height, bool vsync, const char* title) {
 
   glViewport(0, 0, width, height);
 
-  return (window_t){0, width, height, window, glfwGetTime(), 0};
+  return (window_t){0, width, height, window, glfwGetTime(), 0, 0, 0, 0, 0};
 }
 
 bool window_alive(window_t window) {

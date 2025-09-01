@@ -20,5 +20,5 @@ void main() {
   vec3 light_dir = normalize(pos_eye - light_pos);
   float strength = (dot(-light_dir, normal_world) + 1.0) / 2.0;
 
-  FragColor = strength * texture(u_tex0, tex_coord);
+  FragColor = strength * vec4(1.0, 0.0, 0.0, 1.0); //texture(u_tex0, tex_coord);
 }

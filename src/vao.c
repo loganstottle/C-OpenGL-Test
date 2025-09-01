@@ -24,6 +24,6 @@ void vao_bind(vao_t vao) {
   glBindVertexArray(vao.id);
 }
 
-void vao_unbind(vao_t vao) {
+void vao_unbind() {
   glBindVertexArray(0);
 }

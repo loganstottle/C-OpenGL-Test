@@ -46,6 +46,6 @@ void texture_bind(texture_t texture, GLenum texture_unit) {
   glBindTexture(GL_TEXTURE_2D, texture.id);
 }
 
-void texture_unbind(texture_t texture) {
+void texture_unbind() {
   glBindTexture(GL_TEXTURE_2D, 0);
 }

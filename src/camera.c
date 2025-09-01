@@ -57,7 +57,7 @@ void camera_inputs(camera_t* camera, window_t window) {
   }
 
   if (window_iskeydown(window, GLFW_KEY_D)) {
-    vec3 flat_orientation, delta_pos;
+    vec3 delta_pos;
 
     glm_vec3_scale(camera->right, camera->speed * window.delta_time, delta_pos);
     glm_vec3_add(camera->position, delta_pos, camera->position);
@@ -66,7 +66,7 @@ void camera_inputs(camera_t* camera, window_t window) {
   }
 
   if (window_iskeydown(window, GLFW_KEY_A)) {
-    vec3 flat_orientation, delta_pos;
+    vec3 delta_pos;
 
     glm_vec3_scale(camera->right, camera->speed * window.delta_time, delta_pos);
     glm_vec3_sub(camera->position, delta_pos, camera->position);

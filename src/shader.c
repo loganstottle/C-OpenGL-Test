@@ -46,8 +46,8 @@ GLuint shader_compile(const char* path, GLenum type) {
 }
 
 shader_t shader_load(const char* vert, const char* frag) {
-  unsigned int vert_shader = shader_compile("shaders/vert.glsl", GL_VERTEX_SHADER);
-  unsigned int frag_shader = shader_compile("shaders/frag.glsl", GL_FRAGMENT_SHADER);
+  unsigned int vert_shader = shader_compile(vert, GL_VERTEX_SHADER);
+  unsigned int frag_shader = shader_compile(frag, GL_FRAGMENT_SHADER);
 
   unsigned int shader_program = glCreateProgram();
   glAttachShader(shader_program, vert_shader);
@@ -66,7 +66,7 @@ void shader_bind(shader_t shader) {
   glUseProgram(shader.id);
 }
 
-void shader_unbind(shader_t shader) {
+void shader_unbind() {
   glUseProgram(0);
 }
 

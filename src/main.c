@@ -5,12 +5,9 @@
 #include "shader.h"
 #include "texture.h"
 #include "window.h"
-#include "buffer.h"
-#include "vao.h"
 #include "transform.h"
 #include "camera.h"
-#include "vertex.h"
-#include "cube.h"
+#include "mesh.h"
 
 int main() {
   float window_width = 1200;
@@ -23,20 +20,8 @@ int main() {
 
   window_t window = window_init(window_width, window_height, false, "Test");
 
-  vao_t vao = vao_create();
-
-  buffer_t vbo = buffer_create(GL_ARRAY_BUFFER);
-  buffer_set(vbo, (void*)cube_vertices, sizeof(cube_vertices), GL_STATIC_DRAW);
-
-  vao_stride(&vao, sizeof(vertex_t));
-
-  vao_attrib(&vao, 3, GL_FLOAT, GL_FALSE, offsetof(vertex_t, position));
-  vao_attrib(&vao, 3, GL_FLOAT, GL_FALSE, offsetof(vertex_t, normal));
-  vao_attrib(&vao, 3, GL_FLOAT, GL_FALSE, offsetof(vertex_t, color));
-  vao_attrib(&vao, 2, GL_FLOAT, GL_FALSE, offsetof(vertex_t, tex_coord));
-
-  buffer_t ibo = buffer_create(GL_ELEMENT_ARRAY_BUFFER);
-  buffer_set(ibo, (void*)cube_indices, sizeof(cube_indices), GL_STATIC_DRAW);
+  mesh_t suzanne = mesh_load("./assets/suzanne/scene.gltf");
+  mesh_setup(&suzanne);
 
   shader_t shader = shader_load("shaders/vert.glsl", "shaders/frag.glsl");
   shader_set_uniform_1i(shader, "u_tex0", 0); // 0 corresponds to GL_TEXTURE0
@@ -55,7 +40,6 @@ int main() {
   camera.position[2] += 5;
 
   mat4 model, view, projection, model_view;
-  mat3 normal;
 
   transform_to_model_matrix(square_transform, model);
 
@@ -84,8 +68,10 @@ int main() {
       shader_set_uniform_matrix_4fv(shader, "u_view", view);
     }
 
-    square_transform.rotation[1] += 0.1;
-    square_transform.rotation[2] += 0.1;
+    square_transform.position[1] = sin(2 * glfwGetTime());
+
+    square_transform.rotation[1] += 0.15;
+    square_transform.rotation[2] += 0.15;
 
     transform_to_model_matrix(square_transform, model);
 
@@ -93,14 +79,11 @@ int main() {
     shader_set_uniform_matrix_4fv(shader, "u_modelview", model_view);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDrawElements(GL_TRIANGLES, sizeof(cube_indices) / sizeof(unsigned int), GL_UNSIGNED_INT, NULL);
+    mesh_draw(&suzanne, camera);
 
     window_render(window); // swap buffers
   }
 
-  glDeleteVertexArrays(1, &vao.id);
-  glDeleteBuffers(1, &vbo.id);
-  glDeleteBuffers(1, &ibo.id);
   glDeleteProgram(shader.id);
   glDeleteTextures(1, &cat_texture.id);
 

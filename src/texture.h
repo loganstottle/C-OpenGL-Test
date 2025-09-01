@@ -10,6 +10,6 @@ typedef struct {
 
 texture_t texture_load(const char* file_name, GLenum texture_unit);
 void texture_bind(texture_t texture, GLenum texture_unit);
-void texture_unbind(texture_t texture);
+void texture_unbind();
 
 #endif
