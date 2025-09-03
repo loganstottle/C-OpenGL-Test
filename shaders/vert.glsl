@@ -15,9 +15,11 @@ out vec2 tex_coord;
 out vec3 pos_eye;
 out vec3 normal_local;
 
+mat3 normal_matrix = transpose(inverse(mat3(u_modelview)));
+
 void main() {
   gl_Position = u_projection * u_modelview * vec4(a_pos, 1.0);
   pos_eye = (u_modelview * vec4(a_pos, 1.0)).xyz;
-  normal_local = a_normal;
+  normal_local = normalize(normal_matrix * a_normal);
   tex_coord = a_tex;
 }

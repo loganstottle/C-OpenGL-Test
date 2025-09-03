@@ -12,7 +12,9 @@ texture_t texture_load(const char* file_name, GLenum texture_unit) {
   unsigned char* image_data = stbi_load(file_name, &result.width, &result.height, &result.channels, 0);
 
   glGenTextures(1, &result.id);
-  texture_bind(result, texture_unit);
+ 
+  result.unit = texture_unit;
+  texture_bind(result);
 
   // todo: custom texture parameters
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -41,8 +43,8 @@ texture_t texture_load(const char* file_name, GLenum texture_unit) {
   return result;
 }
 
-void texture_bind(texture_t texture, GLenum texture_unit) {
-  glActiveTexture(texture_unit);
+void texture_bind(texture_t texture) {
+  glActiveTexture(texture.unit);
   glBindTexture(GL_TEXTURE_2D, texture.id);
 }
 

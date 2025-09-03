@@ -16,7 +16,7 @@ GLuint shader_compile(const char* path, GLenum type) {
   }
 
   fseek(f, 0, SEEK_END);
-  
+
   int file_size = ftell(f);
   rewind(f);
 
@@ -68,41 +68,4 @@ void shader_bind(shader_t shader) {
 
 void shader_unbind() {
   glUseProgram(0);
-}
-
-bool check_uniform_location(int uniform_location, const char* name) {
-  bool ok = uniform_location != -1;
-
-  if (!ok)
-    printf("shader uniform \"%s\" does not exist\n", name);
-
-  return ok;
-}
-
-void shader_set_uniform_1i(shader_t shader, const char* name, int v0) {
-  int uniform_location = glGetUniformLocation(shader.id, name);
-
-  if (check_uniform_location(uniform_location, name))
-    glUniform1i(uniform_location, v0);
-}
-
-void shader_set_uniform_matrix_4fv(shader_t shader, const char* name, mat4 matrix) {
-  int uniform_location = glGetUniformLocation(shader.id, name);
-
-  if (check_uniform_location(uniform_location, name))
-    glUniformMatrix4fv(uniform_location, 1, GL_FALSE, (GLfloat*)matrix);
-}
-
-void shader_set_uniform_matrix_3fv(shader_t shader, const char* name, mat3 matrix) {
-  int uniform_location = glGetUniformLocation(shader.id, name);
-
-  if (check_uniform_location(uniform_location, name))
-    glUniformMatrix3fv(uniform_location, 1, GL_FALSE, (GLfloat*)matrix);
-}
-
-void shader_set_uniform_3fv(shader_t shader, const char* name, vec3 vector) {
-  int uniform_location = glGetUniformLocation(shader.id, name);
-
-  if (check_uniform_location(uniform_location, name))
-    glUniform3fv(uniform_location, 1, (GLfloat*)vector);
 }

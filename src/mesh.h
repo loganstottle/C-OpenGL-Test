@@ -20,6 +20,6 @@ typedef struct {
 
 mesh_t mesh_load(char* path);
 void mesh_setup(mesh_t* mesh);
-void mesh_draw(mesh_t* mesh, camera_t camera);
+void mesh_draw(mesh_t* mesh);
 
 #endif

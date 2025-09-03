@@ -1,6 +1,17 @@
 #include "camera.h"
 #include "window.h"
 
+camera_t camera_init(float sensitivity, float speed, float fov, float aspect_ratio, float near_plane, float far_plane) {
+  camera_t result = {0};
+
+  result.sensitivity = sensitivity;
+  result.speed = speed;
+ 
+  glm_perspective(glm_rad(fov), aspect_ratio, near_plane, far_plane, result.projection);
+
+  return result;
+}
+
 void camera_update_orientation(camera_t* camera) {
   camera->orientation[0] = cosf(glm_rad(camera->pitch)) * sinf(glm_rad(camera->yaw));
   camera->orientation[1] = sinf(glm_rad(camera->pitch));

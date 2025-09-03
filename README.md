@@ -17,3 +17,4 @@ Making this "engine" to learn how OpenGL works
 
 # Preview
 <img src="https://raw.githubusercontent.com/loganstottle/OpenGL-Test/refs/heads/master/preview.gif">
+<img src="https://raw.githubusercontent.com/loganstottle/OpenGL-Test/refs/heads/master/preview2.gif">

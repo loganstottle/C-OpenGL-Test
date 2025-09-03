@@ -8,6 +8,29 @@
 #include "transform.h"
 #include "camera.h"
 #include "mesh.h"
+#include "material.h"
+#include "object.h"
+
+void render_object(object_t object, camera_t camera) {
+  mat4 model, view, model_view;
+ 
+  if (camera.dirty) {
+    camera_to_matrix(camera, view);
+    camera.dirty = false;
+  }
+ 
+  transform_to_model_matrix(object.transform, model);
+
+  material_set_uniform_mat4(&object.material, "u_view", view);
+
+  glm_mat4_mul(view, model, model_view);
+  material_set_uniform_mat4(&object.material, "u_modelview", model_view);
+
+  material_set_uniform_mat4(&object.material, "u_projection", camera.projection);
+
+  material_apply_uniforms(object.material);
+  mesh_draw(&object.mesh);
+}
 
 int main() {
   float window_width = 1200;
@@ -20,39 +43,28 @@ int main() {
 
   window_t window = window_init(window_width, window_height, false, "Test");
 
-  mesh_t suzanne = mesh_load("./assets/suzanne/scene.gltf");
-  mesh_setup(&suzanne);
-
-  shader_t shader = shader_load("shaders/vert.glsl", "shaders/frag.glsl");
-  shader_set_uniform_1i(shader, "u_tex0", 0); // 0 corresponds to GL_TEXTURE0
-
-  transform_t square_transform = {
-    {0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 0.0f},
-    {1.0f, 1.0f, 1.0f},
-  };
-
-  camera_t camera = {0};
-
-  camera.speed = 5;
-  camera.sensitivity = 1;
-
+  camera_t camera = camera_init(1, 5, fov, window_width / window_height, near_plane, far_plane);
   camera.position[2] += 5;
 
-  mat4 model, view, projection, model_view;
+  shader_t shader = shader_load("shaders/vert.glsl", "shaders/frag.glsl");
 
-  transform_to_model_matrix(square_transform, model);
+  object_t suzanne = object_init("./assets/suzanne/scene.gltf");
+  transform_set_scale(&suzanne.transform, 0.5, 0.5, 0.5);
+  transform_set_position(&suzanne.transform, -1, 0, 0);
 
-  camera_to_matrix(camera, view);
-  shader_set_uniform_matrix_4fv(shader, "u_view", view);
+  material_set_shader(&suzanne.material, shader);
+  material_set_color(&suzanne.material, 1, 0, 0, 1);
 
-  glm_mat4_mul(view, model, model_view);
-  shader_set_uniform_matrix_4fv(shader, "u_modelview", model_view);
+  material_set_uniform_vec4(&suzanne.material, "u_color", suzanne.material.color);
 
-  glm_perspective(glm_rad(fov), window_width / window_height, near_plane, far_plane, projection);
-  shader_set_uniform_matrix_4fv(shader, "u_projection", projection);
- 
-  texture_t cat_texture = texture_load("cat.jpg", GL_TEXTURE0);
+  object_t cat = object_init("./assets/Kitten/Mesh_Kitten.obj");
+  transform_set_scale(&cat.transform, 0.05, 0.05, 0.05);
+  transform_set_position(&cat.transform, 1, 0, 0);
+
+  material_set_shader(&cat.material, shader);
+  material_set_color(&cat.material, 0, 0, 1, 1);
+
+  material_set_uniform_vec4(&cat.material, "u_color", cat.material.color);
 
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
@@ -63,29 +75,23 @@ int main() {
     if (window_iskeydown(window, GLFW_KEY_ESCAPE)) break;
     camera_inputs(&camera, window);
 
-    if (camera.dirty) {
-      camera_to_matrix(camera, view);
-      shader_set_uniform_matrix_4fv(shader, "u_view", view);
-    }
+    suzanne.transform.position[1] = sin(4 * glfwGetTime());
 
-    square_transform.position[1] = sin(2 * glfwGetTime());
+    suzanne.transform.rotation[1] += 0.25;
+    suzanne.transform.rotation[2] += 0.15;
 
-    square_transform.rotation[1] += 0.15;
-    square_transform.rotation[2] += 0.15;
+    cat.transform.position[1] = -sin(3 * glfwGetTime());
 
-    transform_to_model_matrix(square_transform, model);
-
-    glm_mat4_mul(view, model, model_view);
-    shader_set_uniform_matrix_4fv(shader, "u_modelview", model_view);
+    cat.transform.rotation[1] -= 0.15;
+    cat.transform.rotation[2] -= 0.25;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    mesh_draw(&suzanne, camera);
+
+    render_object(suzanne, camera);
+    render_object(cat, camera);
 
     window_render(window); // swap buffers
   }
-
-  glDeleteProgram(shader.id);
-  glDeleteTextures(1, &cat_texture.id);
 
   window_cleanup(window);
 
