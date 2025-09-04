@@ -19,10 +19,10 @@ void material_set_uniform(material_t* material, uniform_t uniform) {
     printf("too many uniforms!\n");
 
   for (int i = 0; i < material->num_uniforms; i++)
-  if (strcmp(material->uniforms[i].name, uniform.name) == 0) {
-    material->uniforms[i].data = uniform.data;
-    return;
-  }
+    if (strcmp(material->uniforms[i].name, uniform.name) == 0) {
+      material->uniforms[i].data = uniform.data;
+      return;
+    }
 
   material->uniforms[material->num_uniforms++] = uniform;
 }
@@ -63,12 +63,15 @@ void material_set_uniform_mat4(material_t* material, const char* name, mat4 m) {
 }
 
 void material_apply_uniforms(material_t material) {
+  for (int j = 0; j < material.num_textures; j++)
+    texture_bind(material.textures[j]);
+
   for (int i = 0; i < material.num_uniforms; i++) {
     uniform_t uniform = material.uniforms[i];
     int uniform_location = glGetUniformLocation(material.shader.id, uniform.name);
 
     if (uniform_location == -1) {
-      printf("uniform \"%s\" does not exist\n", uniform.name);
+      //printf("uniform \"%s\" does not exist\n", uniform.name);
       continue;
     }
 
@@ -85,4 +88,14 @@ void material_apply_uniforms(material_t material) {
         glUniformMatrix4fv(uniform_location, 1, GL_FALSE, (GLfloat*)uniform.data.MAT4); break;
     }
   }
+}
+
+void material_add_texture(material_t* material, char* texture_path) {
+  if (material->num_textures == MAX_TEXTURES) {
+    printf("too many textures on material");
+    return;
+  }
+
+  material->textures[material->num_textures] = texture_load(texture_path, GL_TEXTURE0 + material->num_textures);
+  material->num_textures++;
 }

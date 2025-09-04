@@ -6,6 +6,7 @@
 #include "buffer.h"
 #include "texture.h"
 #include "camera.h"
+#include "material.h"
 
 typedef struct {
   vertex_t* vertices;
@@ -18,7 +19,7 @@ typedef struct {
   buffer_t vbo, ibo;
 } mesh_t;
 
-mesh_t mesh_load(char* path);
+mesh_t mesh_load(char* path, material_t* result_material);
 void mesh_setup(mesh_t* mesh);
 void mesh_draw(mesh_t* mesh);
 

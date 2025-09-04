@@ -11,6 +11,7 @@ uniform mat4 u_view;
 uniform mat4 u_modelview;
 uniform sampler2D u_tex0;
 uniform vec4 u_color;
+uniform int u_textured;
 
 vec3 light_pos = vec3(-2.5, 2.5, 2.5);
 
@@ -19,5 +20,5 @@ void main() {
   vec3 light_dir = normalize(pos_eye - light_pos);
   float strength = (dot(-light_dir, normal_local) + 1.0) / 2.0;
 
-  FragColor = strength * u_color; //texture(u_tex0, tex_coord);
+  FragColor = strength * (u_textured == 1 ? texture(u_tex0, tex_coord) : u_color);
 }

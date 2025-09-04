@@ -3,7 +3,6 @@
 #include <cglm/cglm.h>
 
 #include "shader.h"
-#include "texture.h"
 #include "window.h"
 #include "transform.h"
 #include "camera.h"
@@ -18,6 +17,9 @@ void render_object(object_t object, camera_t camera) {
     camera_to_matrix(camera, view);
     camera.dirty = false;
   }
+
+  for (int i = 0; i < object.material.num_textures; i++)
+    texture_bind(object.material.textures[i]);
  
   transform_to_model_matrix(object.transform, model);
 
@@ -30,6 +32,8 @@ void render_object(object_t object, camera_t camera) {
 
   material_apply_uniforms(object.material);
   mesh_draw(&object.mesh);
+
+  texture_unbind();
 }
 
 int main() {
@@ -56,15 +60,16 @@ int main() {
   material_set_color(&suzanne.material, 1, 0, 0, 1);
 
   material_set_uniform_vec4(&suzanne.material, "u_color", suzanne.material.color);
+  material_set_uniform_int(&suzanne.material, "u_textured", 0);
 
   object_t cat = object_init("./assets/Kitten/Mesh_Kitten.obj");
   transform_set_scale(&cat.transform, 0.05, 0.05, 0.05);
   transform_set_position(&cat.transform, 1, 0, 0);
 
   material_set_shader(&cat.material, shader);
-  material_set_color(&cat.material, 0, 0, 1, 1);
 
-  material_set_uniform_vec4(&cat.material, "u_color", cat.material.color);
+  material_set_uniform_int(&cat.material, "u_tex0", 0);
+  material_set_uniform_int(&cat.material, "u_textured", 1);
 
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);

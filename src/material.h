@@ -2,8 +2,10 @@
 #define MATERIAL_H
 
 #include "shader.h"
+#include "texture.h"
 
-#define MAX_UNIFORMS 32
+#define MAX_UNIFORMS 8
+#define MAX_TEXTURES 8
 
 typedef struct {
   const char* name;
@@ -28,6 +30,8 @@ typedef struct {
   shader_t shader;
   uniform_t uniforms[MAX_UNIFORMS];
   int num_uniforms;
+  texture_t textures[MAX_TEXTURES];
+  int num_textures;
 } material_t;
 
 void material_set_color(material_t* material, float r, float g, float b, float a);
@@ -38,5 +42,6 @@ void material_set_uniform_vec4(material_t* material, const char* name, vec4 v);
 void material_set_uniform_mat3(material_t* material, const char* name, mat3 m);
 void material_set_uniform_mat4(material_t* material, const char* name, mat4 m);
 void material_apply_uniforms(material_t material);
+void material_add_texture(material_t* material, char* texture_path);
 
 #endif
